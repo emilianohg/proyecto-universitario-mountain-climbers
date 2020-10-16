@@ -21,10 +21,24 @@ public class GameWindow extends JFrame {
 
         setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 
-        initScenes();
         setVisible(true);
+        initScenes();
+        initGlass();
+
+        revalidate();
+        repaint();
+        update(getGraphics());
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    private void initGlass () {
+        JPanel glass = (JPanel) getGlassPane();
+        glass.setBackground(Color.RED);
+        glass.setSize(getWidth(), getHeight());
+        glass.add(new JButton("Hola mundo"));
+        glass.setVisible(true);
+        glass.update(glass.getGraphics());
     }
 
     private void initScenes () {
@@ -42,23 +56,29 @@ public class GameWindow extends JFrame {
         };
         Scene scene = new Scene(layoutsScene);
 
-        int w = 51, h = 51;
+        int tileWidth = 51, tileHeight = 51;
 
         for (int i = 0; i < 10; i++) {
-            scene.addTile(new Tile("src/assets/tiles/grass.png", i*w, 400 - h));
+            scene.addTile(new Tile("src/assets/tiles/grass.png", i*tileWidth, 400 - tileHeight));
         }
 
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 10; j++) {
-                scene.addTile(new Tile("src/assets/tiles/rock.png", j * w, i * h + 400));
+                scene.addTile(new Tile("src/assets/tiles/rock.png", j * tileWidth, i * tileHeight + 400));
             }
         }
 
         for (int i = 0; i < 10; i++) {
-            scene.addTile(new Tile("src/assets/tiles/grass.png", i*w, getHeight() - h));
+            scene.addTile(new Tile("src/assets/tiles/grass.png", i*tileWidth, getHeight() - tileHeight));
         }
 
-        GameCanvas gameCanvas = new GameCanvas(getWidth() / games.length, getHeight());
+        int w = getContentPane().getWidth();
+        int h = getContentPane().getHeight();
+
+        System.out.println(w);
+        System.out.println(h);
+
+        GameCanvas gameCanvas = new GameCanvas( w / games.length, h);
 
         gameCanvas.addScene(scene);
 
@@ -77,13 +97,24 @@ public class GameWindow extends JFrame {
                 getUrls("src/assets/players/player_"+number+"/Attack__%03d.png", 9),
                 200
         );
+        PlayerAnimation animationJump = new PlayerAnimation(
+                "jump",
+                getUrls("src/assets/players/player_"+number+"/Jump__%03d.png", 9),
+                200
+        );
 
         Player player = new Player("src/assets/players/player_"+number+"/Idle__000.png");
         player
             .setHeightMaintainScale(100)
             .setCoordinates(100, getHeight() - player.getHeight() - 45);
 
-        player.addAnimations(new PlayerAnimation[] { animationClimb, animationAttack, animationIdle });
+        player.addAnimations(new PlayerAnimation[] {
+            animationIdle,
+            animationClimb,
+            animationAttack,
+            animationJump,
+        });
+        player.setAnimation("idle");
 
         gameCanvas.addPlayer(player);
 

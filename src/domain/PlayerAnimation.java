@@ -17,7 +17,8 @@ public class PlayerAnimation {
 
     public PlayerAnimation (String name, String[] urlImages, int duration) {
         this.name = name;
-        this.duration = duration;
+        this.duration = duration; // TODO: PONER duracion como total fotogramas
+        // SI NO SE PONE DURACION HACERLO INFINITO
 
         images = new ArrayList<>();
 

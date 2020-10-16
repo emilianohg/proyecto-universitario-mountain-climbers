@@ -14,6 +14,14 @@ public class GameCanvas extends Canvas {
     private final int steps = 10;
     private int wait = 40;
 
+    private String[] status = new String[] {
+        "WAITING",
+        "CLIMBING",
+        "JUMPING",
+        "ATTACKING",
+    };
+    private String currentStatus = "WAITING";
+
     Image offscreen;
     Graphics currentGraphic;
 
@@ -24,46 +32,53 @@ public class GameCanvas extends Canvas {
         setVisible(true);
 
         new Timer(80, actionEvent -> {
-            if (wait > 0) {
-                wait--;
+
+            if (player == null) {
                 return;
             }
 
-            Coordinate nextCoord = player.nextMove();
+            if (wait == 0) {
+                player.setAnimation("climb");
+                currentStatus = "CLIMBING";
+            }
+            wait--;
 
-            if (nextCoord != null && nextCoord.getY() <= 250) {
+            Coordinate nextCoord = player.nextMove();
+            if (currentStatus.equals("JUMPING")) {
+                player.moveTo(150, 210);
+                System.out.println("jumping");
+            }
+
+
+            if (currentStatus.equals("CLIMBING") && nextCoord != null && nextCoord.getY() < 250) {
                 player.resetMovements();
                 player.moveTo(player.getX(), 250);
                 endGame = true;
+                currentStatus = "JUMPING";
+                player.setAnimation("jump");
             }
 
-            if (endGame && !player.isMoved()) {
-                player.setAnimation("idle");
-            } else {
-                game();
-            }
+            game();
             repaint();
+
         }).start();
     }
 
     private void game () {
 
-        if (player == null) {
-            return;
+        switch (currentStatus) {
+            case "WAITING":
+                break;
+            case "CLIMBING":
+                if (player.nextMove() == null) {
+                    int increment = calcIncrement();
+                    player.up(increment, steps);
+                }
+                break;
+            case "JUMPING":
+                break;
         }
 
-        if (player.isMoved()) {
-            return;
-        }
-
-        int increment = calcIncrement();
-
-        if (player.getY() - increment <= 250) { // TODO: Considerar altura del personaje
-            player.moveTo(player.getX(), 250, steps);
-
-        }
-
-        player.up(increment, steps);
     }
 
     private int calcIncrement () {
