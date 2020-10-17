@@ -2,8 +2,7 @@ package domain;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
 public class Scene {
@@ -38,9 +37,15 @@ public class Scene {
             return null;
         }
 
-        BufferedImage image = layouts.get(0).getImage();
-        int w = image.getWidth();
-        int h = image.getHeight();
+        int w = layouts.stream()
+            .mapToInt(GameGraphics::getWidth)
+            .max()
+            .getAsInt();
+
+        int h = layouts.stream()
+                .mapToInt(GameGraphics::getWidth)
+                .max()
+                .getAsInt();
 
         BufferedImage combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 

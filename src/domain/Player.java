@@ -2,9 +2,7 @@ package domain;
 
 import utils.ImageUtils;
 
-import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,8 +12,9 @@ public class Player extends GameGraphics {
 
     private List<PlayerAnimation> animations;
     private PlayerAnimation defaultAnimation;
+    private PlayerAnimation currentAnimation;
     boolean isMoved = false;
-    List<int[]> moves;
+    List<Coordinate> moves;
 
     public Player(String urlImage) {
         this(urlImage, 0, 0);
@@ -39,10 +38,6 @@ public class Player extends GameGraphics {
     @Override
     public BufferedImage getImage() {
 
-        if (defaultAnimation == null) {
-            return super.getImage();
-        }
-
         Coordinate m = nextMove();
         if (m == null) {
             isMoved = false;
@@ -51,7 +46,23 @@ public class Player extends GameGraphics {
             moves.remove(0);
         }
 
-        BufferedImage image = defaultAnimation.getFrame();
+        if (defaultAnimation == null) {
+            return super.getImage();
+        }
+
+        PlayerAnimation animation = currentAnimation;
+
+        if (animation == null) {
+            animation = defaultAnimation;
+        }
+
+        BufferedImage image = animation.getFrame();
+
+        if (image == null) {
+            defaultAnimation.reset();
+            image = defaultAnimation.getFrame();
+        }
+
         if (scale != 1) {
             image = ImageUtils.scale(
                 image,
@@ -60,7 +71,6 @@ public class Player extends GameGraphics {
             );
         }
         return image;
-
     }
 
     public boolean isMoved() {
@@ -86,20 +96,24 @@ public class Player extends GameGraphics {
     public void moveTo(int x, int y, int steps) {
         isMoved = true;
 
+
         int currentX = getX();
         int currentY = getY();
+        if (moves.size() > 0) {
+            Coordinate currentCoordinate = moves.get(moves.size() - 1);
+            currentX = currentCoordinate.getX();
+            currentY = currentCoordinate.getY();
+        }
 
         int stepX = (x - currentX) / steps;
         int stepY = (y - currentY) / steps;
 
         for (int i = 1; i <= steps; i++) {
-            // TODO: PUEDE DAR SALTOS
-            int[] coord = new int[] {currentX + i*stepX, currentY + i*stepY};
+            Coordinate coord = new Coordinate(currentX + i*stepX, currentY + i*stepY);
             if (i == steps) {
-                coord = new int[] {x, y};
+                coord = new Coordinate(x, y);
             }
             moves.add(coord);
-            System.out.println(Arrays.toString(coord));
         }
 
     }
@@ -112,7 +126,7 @@ public class Player extends GameGraphics {
         if (moves.size() == 0) {
             return null;
         }
-        return new Coordinate(moves.get(0)[0], moves.get(0)[1]);
+        return moves.get(0);
     }
 
     public void resetMovements () {
@@ -124,7 +138,8 @@ public class Player extends GameGraphics {
             .filter(playerAnimation -> playerAnimation.getName().equals(name))
             .findFirst();
 
-        defaultAnimation = animation.orElse(defaultAnimation);
+        currentAnimation = animation.orElse(defaultAnimation);
+        currentAnimation.reset();
     }
 
 }

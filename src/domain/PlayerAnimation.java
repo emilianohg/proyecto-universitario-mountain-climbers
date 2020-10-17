@@ -11,14 +11,22 @@ public class PlayerAnimation {
 
     private final String name;
     private List<BufferedImage> images;
-    private int duration;
+    private final int duration;
+    private int cont;
     private int cursor;
     private boolean stoped = false;
+    private boolean infinite = false;
+
+    public PlayerAnimation (String name, String[] urlImages) {
+        this(name, urlImages, -1);
+    }
 
     public PlayerAnimation (String name, String[] urlImages, int duration) {
         this.name = name;
-        this.duration = duration; // TODO: PONER duracion como total fotogramas
-        // SI NO SE PONE DURACION HACERLO INFINITO
+        this.duration = duration;
+        if (this.duration == -1) {
+            infinite = true;
+        }
 
         images = new ArrayList<>();
 
@@ -34,6 +42,14 @@ public class PlayerAnimation {
 
     public BufferedImage getFrame () {
         BufferedImage image = images.get(cursor);
+
+        if (!infinite) {
+            cont++;
+
+            if (cont > duration) {
+                return null;
+            }
+        }
 
         if (stoped) {
             return image;
@@ -53,5 +69,9 @@ public class PlayerAnimation {
 
     public void stop () {
         this.stoped = true;
+    }
+
+    public void reset () {
+        cont = 0;
     }
 }

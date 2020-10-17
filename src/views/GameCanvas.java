@@ -1,8 +1,6 @@
 package views;
 
-import domain.Coordinate;
-import domain.Player;
-import domain.Scene;
+import domain.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,8 +9,11 @@ import java.util.Random;
 public class GameCanvas extends Canvas {
     private Scene scene;
     private Player player;
-    private final int steps = 10;
-    private int wait = 40;
+    private final int STEPS = 10;
+    private final int BASE_Y = 300;
+    private Game game;
+    private int session;
+    private int position;
 
     private String[] status = new String[] {
         "WAITING",
@@ -27,9 +28,12 @@ public class GameCanvas extends Canvas {
 
     boolean endGame = false;
 
-    public GameCanvas(int width, int height) {
+    public GameCanvas(int width, int height, int session) {
         setSize(width, height);
         setVisible(true);
+
+        this.session = session;
+        game = Game.getInstance(this.session);
 
         new Timer(80, actionEvent -> {
 
@@ -37,23 +41,18 @@ public class GameCanvas extends Canvas {
                 return;
             }
 
-            if (wait == 0) {
-                player.setAnimation("climb");
-                currentStatus = "CLIMBING";
-            }
-            wait--;
-
             Coordinate nextCoord = player.nextMove();
-            if (currentStatus.equals("JUMPING")) {
-                player.moveTo(150, 210);
-                System.out.println("jumping");
+            if (currentStatus.equals("JUMPING") && !endGame) {
+                endGame = true;
+                player.moveTo(70, 230, 5);
+                player.moveTo(90, 250, 5);
+                position = game.getPosition(this.session);
+                System.out.println(position);
             }
 
-
-            if (currentStatus.equals("CLIMBING") && nextCoord != null && nextCoord.getY() < 250) {
+            if (!endGame && currentStatus.equals("CLIMBING") && nextCoord != null && nextCoord.getY() <= BASE_Y) {
                 player.resetMovements();
-                player.moveTo(player.getX(), 250);
-                endGame = true;
+                player.moveTo(player.getX(), BASE_Y);
                 currentStatus = "JUMPING";
                 player.setAnimation("jump");
             }
@@ -72,13 +71,18 @@ public class GameCanvas extends Canvas {
             case "CLIMBING":
                 if (player.nextMove() == null) {
                     int increment = calcIncrement();
-                    player.up(increment, steps);
+                    player.up(increment, STEPS);
                 }
                 break;
             case "JUMPING":
                 break;
         }
 
+    }
+
+    public void start () {
+        currentStatus = "CLIMBING";
+        player.setAnimation("climb");
     }
 
     private int calcIncrement () {
@@ -114,6 +118,24 @@ public class GameCanvas extends Canvas {
         }
         if (player != null) {
             g.drawImage(player.getImage(), player.getX(), player.getY(), this);
+        }
+        if (position > 0) {
+            g.setFont(new Font("Courier", Font.BOLD, 46));
+            g.setColor(new Color(66, 167, 56, 255));
+            FontMetrics fm = g.getFontMetrics();
+            String text = String.valueOf(position);
+            int w = fm.stringWidth(text);
+            int h = fm.getAscent();
+            g.drawString(text, getWidth() - w - 10, 30 + (h / 4));
+
+
+            if (position <= 3) {
+                int posX = (getWidth()/2)-64;
+                int posY = 40;
+                Item award = new Item("src/assets/awards/win-"+position+".png", posX, posY);
+                g.drawImage(award.getImage(), award.getX(), award.getY(), this);
+            }
+
         }
     }
 

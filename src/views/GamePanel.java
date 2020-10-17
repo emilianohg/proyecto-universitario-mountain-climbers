@@ -18,7 +18,7 @@ public class GamePanel extends Panel {
         setPreferredSize(new Dimension(width, height));
         setVisible(true);
 
-        Timer timer=new Timer(100, actionEvent -> repaint());
+        Timer timer = new Timer(100, actionEvent -> repaint());
         timer.start();
     }
 
