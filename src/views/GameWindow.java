@@ -12,6 +12,7 @@ public class GameWindow extends JFrame implements GameListener {
 
     GameCanvas[] games;
     int numberPlayers = 4;
+    int totalGamesLoaded = 0;
 
     JGameButton btnStart, btnRestart;
     Game game;
@@ -20,6 +21,8 @@ public class GameWindow extends JFrame implements GameListener {
 
     Image offscreen;
     Graphics currentGraphic;
+
+    JLabel loadingLabel;
 
     public GameWindow () {
         super("Mountain climbers");
@@ -49,11 +52,14 @@ public class GameWindow extends JFrame implements GameListener {
 
         btnStart = new JGameButton("src/assets/buttons/play-medium.png", "START");
         btnStart.addActionListener(this::startGame);
-        btnStart.setVisible(true);
+        btnStart.setVisible(false);
 
         btnRestart = new JGameButton("src/assets/buttons/replay.png", "RETURN");
         btnRestart.addActionListener(this::restartGame);
         btnRestart.setVisible(false);
+
+        loadingLabel = new JLabel("Loading ...");
+        loadingLabel.setFont(new Font("Courier", Font.BOLD, 36));
 
         background = new JPanel();
         // background.setLocation(0, 0);
@@ -62,6 +68,7 @@ public class GameWindow extends JFrame implements GameListener {
 
         glass.add(btnStart);
         glass.add(btnRestart);
+        glass.add(loadingLabel);
         glass.update(glass.getGraphics());
         glass.setOpaque(false);
         glass.setVisible(true);
@@ -81,7 +88,6 @@ public class GameWindow extends JFrame implements GameListener {
         background.setVisible(false);
 
         for (GameCanvas game : games) {
-            // game.setVisible(true);
             game.start();
         }
     }
@@ -185,6 +191,20 @@ public class GameWindow extends JFrame implements GameListener {
         revalidate();
         repaint();
         update(getGraphics());
+    }
+
+    @Override
+    public void notifyNewGameLoad() {
+        totalGamesLoaded++;
+        if (totalGamesLoaded == numberPlayers) {
+            loadingLabel.setVisible(false);
+            btnStart.setVisible(true);
+
+            for (GameCanvas game : games) {
+                game.setVisible(true);
+            }
+
+        }
     }
 
     @Override

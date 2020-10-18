@@ -20,6 +20,8 @@ public class GameCanvas extends Canvas {
     private int increment;
     Item arrowUp, arrowDown;
 
+    private boolean load = false;
+
     private String[] status = new String[] {
         "WAITING",
         "CLIMBING",
@@ -36,7 +38,7 @@ public class GameCanvas extends Canvas {
 
     public GameCanvas(int width, int height, int session) {
         setSize(width, height);
-        setVisible(true);
+        setVisible(false);
 
         this.session = session;
         game = Game.getInstance(this.session);
@@ -55,6 +57,11 @@ public class GameCanvas extends Canvas {
 
             game();
             repaint();
+
+            if (!load) {
+                game.loadGame();
+                load = true;
+            }
 
         }).start();
     }

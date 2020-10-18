@@ -10,6 +10,7 @@ public final class Game {
     private int lastPosition;
     private boolean endGame;
     private final List<GameListener> listeners;
+    private int totalGameLoaded = 0;
 
     private static Game instance;
 
@@ -19,14 +20,19 @@ public final class Game {
         reset();
     }
 
-    public static Game getInstance(int numberPlayer) {
+    public static synchronized Game getInstance(int numberPlayer) {
         if (instance == null) {
             instance = new Game(numberPlayer);
         }
         return instance;
     }
 
-    public int getPosition (int number) {
+    public void loadGame () {
+        totalGameLoaded++;
+        listeners.forEach(GameListener::notifyNewGameLoad);
+    }
+
+    public synchronized int getPosition (int number) {
         number--;
 
         int pos = positions[number];

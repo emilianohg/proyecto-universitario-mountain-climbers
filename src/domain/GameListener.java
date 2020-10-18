@@ -5,4 +5,5 @@ public interface GameListener {
 
     public void notifyReset();
 
+    public void notifyNewGameLoad();
 }
