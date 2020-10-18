@@ -96,7 +96,6 @@ public class Player extends GameGraphics {
     public void moveTo(int x, int y, int steps) {
         isMoved = true;
 
-
         int currentX = getX();
         int currentY = getY();
         if (moves.size() > 0) {
@@ -105,11 +104,14 @@ public class Player extends GameGraphics {
             currentY = currentCoordinate.getY();
         }
 
-        int stepX = (x - currentX) / steps;
-        int stepY = (y - currentY) / steps;
+        float stepX = ((float)x - (float)currentX) / (float)steps;
+        float stepY = ((float)y - (float)currentY) / (float)steps;
 
-        for (int i = 1; i <= steps; i++) {
-            Coordinate coord = new Coordinate(currentX + i*stepX, currentY + i*stepY);
+        for (float i = 1; i <= steps; i++) {
+            Coordinate coord = new Coordinate(currentX +  (int)(i*stepX), currentY + (int)(i*stepY));
+            System.out.println(currentX);
+            System.out.println(stepX);
+            System.out.println(coord.getX()+ " "+coord.getY());
             if (i == steps) {
                 coord = new Coordinate(x, y);
             }

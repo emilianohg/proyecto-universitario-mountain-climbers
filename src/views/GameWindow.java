@@ -13,7 +13,7 @@ public class GameWindow extends JFrame implements GameListener {
     GameCanvas[] games;
     int numberPlayers = 4;
 
-    JButton btnStart, btnRestart;
+    JGameButton btnStart, btnRestart;
     Game game;
     JPanel glass;
     JPanel background;
@@ -33,10 +33,6 @@ public class GameWindow extends JFrame implements GameListener {
         setVisible(true);
         initGlass();
 
-        revalidate();
-        repaint();
-        update(getGraphics());
-
         initScenes();
 
         revalidate();
@@ -51,11 +47,11 @@ public class GameWindow extends JFrame implements GameListener {
         glass.setLayout(new GridBagLayout());
         // glass.setSize(getWidth(), getHeight());
 
-        btnStart = new JButton("Comenzar");
+        btnStart = new JGameButton("src/assets/buttons/play-medium.png", "START");
         btnStart.addActionListener(this::startGame);
         btnStart.setVisible(true);
 
-        btnRestart = new JButton("Reiniciar");
+        btnRestart = new JGameButton("src/assets/buttons/replay.png", "RETURN");
         btnRestart.addActionListener(this::restartGame);
         btnRestart.setVisible(false);
 
@@ -69,14 +65,15 @@ public class GameWindow extends JFrame implements GameListener {
         glass.update(glass.getGraphics());
         glass.setOpaque(false);
         glass.setVisible(true);
+        glass.update(glass.getGraphics());
     }
 
     private void restartGame(ActionEvent actionEvent) {
         btnRestart.setVisible(false);
 
-        // for (GameCanvas game : games) {
-        //    game.restart();
-        // }
+         for (GameCanvas game : games) {
+            game.restart();
+         }
     }
 
     private void startGame(ActionEvent actionEvent) {
@@ -136,6 +133,10 @@ public class GameWindow extends JFrame implements GameListener {
             "idle",
             getUrls("src/assets/players/player_"+number+"/Idle__%03d.png", 9)
         );
+        PlayerAnimation animationGlide = new PlayerAnimation(
+                "glide",
+                getUrls("src/assets/players/player_"+number+"/Glide_%03d.png", 9)
+        );
         PlayerAnimation animationClimb = new PlayerAnimation(
             "climb",
             getUrls("src/assets/players/player_"+number+"/Climb_%03d.png", 9)
@@ -152,12 +153,11 @@ public class GameWindow extends JFrame implements GameListener {
         );
 
         Player player = new Player("src/assets/players/player_"+number+"/Idle__000.png");
-        player
-            .setHeightMaintainScale(100)
-            .setCoordinates(50, getHeight() - player.getHeight() - 45);
+        player.setHeightMaintainScale(100);
 
         player.addAnimations(new PlayerAnimation[] {
             animationIdle,
+            animationGlide,
             animationClimb,
             animationAttack,
             animationJump,
@@ -171,12 +171,20 @@ public class GameWindow extends JFrame implements GameListener {
         games[number - 1] = gameCanvas;
     }
 
+    @Override
     public void notifyEndGame () {
         btnRestart.setVisible(true);
         revalidate();
         repaint();
         update(getGraphics());
-        System.out.println("Fin del juego");
+    }
+
+    @Override
+    public void notifyReset() {
+        btnStart.setVisible(true);
+        revalidate();
+        repaint();
+        update(getGraphics());
     }
 
     @Override
@@ -196,8 +204,8 @@ public class GameWindow extends JFrame implements GameListener {
         }
         Graphics2D g2d = (Graphics2D) currentGraphic;
 
-        // g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        // g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         super.paint(g2d);

@@ -33,6 +33,10 @@ public class GameGraphics {
         return this;
     }
 
+    public GameGraphics setCoordinates (Coordinate coordinates) {
+        return setCoordinates(coordinates.getX(), coordinates.getY());
+    }
+
     public GameGraphics setScale (float scale) {
         this.scale = scale;
         return this;

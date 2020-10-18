@@ -6,10 +6,10 @@ import java.util.List;
 
 public final class Game {
 
-    private int[] positions;
+    private final int[] positions;
     private int lastPosition;
     private boolean endGame;
-    private List<GameListener> listeners;
+    private final List<GameListener> listeners;
 
     private static Game instance;
 
@@ -51,6 +51,7 @@ public final class Game {
         lastPosition = 0;
         Arrays.fill(positions, 0);
         endGame = false;
+        listeners.forEach(GameListener::notifyReset);
     }
 
     public boolean isEndGame () {
