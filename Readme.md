@@ -11,8 +11,15 @@ en Java.
 ## :art: Assets
 
 #### :video_game: Ninjas
+
+Ninja Boy
 https://www.gameart2d.com/ninja-run---free-sprites.html
+
+
+Ninja Girl
 https://www.gameart2d.com/ninja-girl---free-sprites.html
+
+
 #### :musical_score: Audios
 **No usados aun**
 
