@@ -12,13 +12,24 @@ en Java.
 
 #### :video_game: Ninjas
 
-Ninja Boy
+Ninja Boy:
 https://www.gameart2d.com/ninja-run---free-sprites.html
 
 
-Ninja Girl
+Ninja Girl:
 https://www.gameart2d.com/ninja-girl---free-sprites.html
 
+#### :sunrise_over_mountains: Background
+
+https://craftpix.net/freebies/free-horizontal-2d-game-backgrounds/
+
+#### :trophy: Otros
+
+Trofeos:
+https://www.flaticon.com/packs/winning-8
+
+Flechas:
+https://www.flaticon.com/free-icon/up-arrows_981221
 
 #### :musical_score: Audios
 **No usados aun**
