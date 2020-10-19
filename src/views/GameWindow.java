@@ -1,11 +1,14 @@
 package views;
 
 import domain.*;
+import utils.ImageUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 
+import static java.lang.Thread.sleep;
 import static utils.StringUtils.getUrls;
 
 public class GameWindow extends JFrame implements GameListener {
@@ -17,10 +20,6 @@ public class GameWindow extends JFrame implements GameListener {
     JGameButton btnStart, btnRestart;
     Game game;
     JPanel glass;
-    JPanel background;
-
-    Image offscreen;
-    Graphics currentGraphic;
 
     JLabel loadingLabel;
 
@@ -38,9 +37,7 @@ public class GameWindow extends JFrame implements GameListener {
 
         initScenes();
 
-        revalidate();
-        repaint();
-        update(getGraphics());
+        update();
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
@@ -48,7 +45,6 @@ public class GameWindow extends JFrame implements GameListener {
     private void initGlass () {
         glass = (JPanel) getGlassPane();
         glass.setLayout(new GridBagLayout());
-        // glass.setSize(getWidth(), getHeight());
 
         btnStart = new JGameButton("src/assets/buttons/play-medium.png", "START");
         btnStart.addActionListener(this::startGame);
@@ -60,11 +56,6 @@ public class GameWindow extends JFrame implements GameListener {
 
         loadingLabel = new JLabel("Loading ...");
         loadingLabel.setFont(new Font("Courier", Font.BOLD, 36));
-
-        background = new JPanel();
-        // background.setLocation(0, 0);
-        // background.setPreferredSize(new Dimension(getWidth(), getHeight()));
-        // background.setSize(new Dimension(getWidth(), getHeight()));
 
         glass.add(btnStart);
         glass.add(btnRestart);
@@ -85,7 +76,6 @@ public class GameWindow extends JFrame implements GameListener {
 
     private void startGame(ActionEvent actionEvent) {
         btnStart.setVisible(false);
-        background.setVisible(false);
 
         for (GameCanvas game : games) {
             game.start();
@@ -128,9 +118,6 @@ public class GameWindow extends JFrame implements GameListener {
         int w = getContentPane().getWidth();
         int h = getContentPane().getHeight();
 
-        System.out.println(w);
-        System.out.println(h);
-
         GameCanvas gameCanvas = new GameCanvas( w / games.length, h, number);
 
         gameCanvas.addScene(scene);
@@ -171,7 +158,6 @@ public class GameWindow extends JFrame implements GameListener {
         player.setAnimation("idle");
 
         gameCanvas.addPlayer(player);
-        // gameCanvas.setVisible(false);
         add(gameCanvas);
 
         games[number - 1] = gameCanvas;
@@ -180,17 +166,12 @@ public class GameWindow extends JFrame implements GameListener {
     @Override
     public void notifyEndGame () {
         btnRestart.setVisible(true);
-        revalidate();
-        repaint();
-        update(getGraphics());
+        update();
     }
 
     @Override
     public void notifyReset() {
         btnStart.setVisible(true);
-        revalidate();
-        repaint();
-        update(getGraphics());
     }
 
     @Override
@@ -198,37 +179,31 @@ public class GameWindow extends JFrame implements GameListener {
         totalGamesLoaded++;
         if (totalGamesLoaded == numberPlayers) {
             loadingLabel.setVisible(false);
-            btnStart.setVisible(true);
 
             for (GameCanvas game : games) {
                 game.setVisible(true);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
+            new Thread(() -> {
+                try {
+                    sleep(2000);
+                    btnStart.setVisible(true);
+                    update();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }
     }
 
-    @Override
-    public void update(Graphics g) {
-        paint(g);
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        if (offscreen == null) {
-            offscreen = createImage(getWidth(), getHeight());
-            repaint();
-            return;
-        }
-        if (currentGraphic == null) {
-            currentGraphic = offscreen.getGraphics();
-        }
-        Graphics2D g2d = (Graphics2D) currentGraphic;
-
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        super.paint(g2d);
-        g.drawImage(offscreen, 0, 0, getWidth(), getHeight(), this);
+    public void update() {
+        revalidate();
+        repaint();
+        update(getGraphics());
     }
 }

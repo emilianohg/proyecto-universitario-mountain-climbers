@@ -2,7 +2,6 @@ package views;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -19,8 +18,6 @@ public class JGameButton extends JButton {
             BorderFactory.createLineBorder(Color.BLACK, 3),
             BorderFactory.createLineBorder(colorYellow, 5))
         );
-        // setBorderPainted(false);
-        // setContentAreaFilled(false);
         setFont(new Font("Courier", Font.BOLD, 36));
         setBackground(colorYellow);
         setFocusable(false);

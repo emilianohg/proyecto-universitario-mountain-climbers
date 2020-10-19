@@ -10,17 +10,13 @@ import java.util.Optional;
 
 public class Player extends GameGraphics {
 
-    private List<PlayerAnimation> animations;
+    private final List<PlayerAnimation> animations;
     private PlayerAnimation defaultAnimation;
     private PlayerAnimation currentAnimation;
     boolean isMoved = false;
     List<Coordinate> moves;
 
     public Player(String urlImage) {
-        this(urlImage, 0, 0);
-    }
-
-    public Player(String urlImage, int x, int y) {
         super(urlImage);
         animations = new ArrayList<>();
         moves = new ArrayList<>();
@@ -109,9 +105,6 @@ public class Player extends GameGraphics {
 
         for (float i = 1; i <= steps; i++) {
             Coordinate coord = new Coordinate(currentX +  (int)(i*stepX), currentY + (int)(i*stepY));
-            System.out.println(currentX);
-            System.out.println(stepX);
-            System.out.println(coord.getX()+ " "+coord.getY());
             if (i == steps) {
                 coord = new Coordinate(x, y);
             }

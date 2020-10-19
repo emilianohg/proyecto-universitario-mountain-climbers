@@ -11,25 +11,16 @@ import java.util.Random;
 public class GameCanvas extends Canvas {
     private Scene scene;
     private Player player;
-    private final int STEPS = 10;
-    private final int BASE_Y = 300;
     private Coordinate positionInitial;
-    private Game game;
-    private int session;
+    private final Game game;
+    private final int session;
     private int position;
     private int increment;
     Item arrowUp, arrowDown;
 
     private boolean load = false;
 
-    private String[] status = new String[] {
-        "WAITING",
-        "CLIMBING",
-        "JUMPING",
-        "GLIDE",
-        "ATTACKING",
-    };
-    private String currentStatus = "WAITING";
+    private GameStatus currentStatus = GameStatus.WAITING;
 
     Image offscreen;
     Graphics currentGraphic;
@@ -70,46 +61,45 @@ public class GameCanvas extends Canvas {
 
         Coordinate nextCoord = player.nextMove();
 
-        if (currentStatus.equals("GLIDE") && player.getY() == positionInitial.getY()) {
+        if (currentStatus.equals(GameStatus.GLIDE) && player.getY() == positionInitial.getY()) {
             player.setAnimation("idle");
-            currentStatus = "WAITING";
+            currentStatus = GameStatus.WAITING;
             game.reset();
         }
 
-        if (currentStatus.equals("JUMPING") && !endGame) {
+        if (currentStatus.equals(GameStatus.JUMPING) && !endGame) {
             endGame = true;
             player.moveTo(70, 230, 5);
             player.moveTo(90, 250, 5);
             position = game.getPosition(this.session);
-            System.out.println(position);
         }
 
-        if (!endGame && currentStatus.equals("CLIMBING") && nextCoord != null && nextCoord.getY() <= BASE_Y) {
+        int BASE_Y = 300;
+
+        if (!endGame && currentStatus.equals(GameStatus.CLIMBING) && nextCoord != null && nextCoord.getY() <= BASE_Y) {
             player.resetMovements();
             player.moveTo(player.getX(), BASE_Y);
-            currentStatus = "JUMPING";
+            currentStatus = GameStatus.JUMPING;
             player.setAnimation("jump");
         }
 
-        if (currentStatus.equals("CLIMBING")) {
+        if (currentStatus.equals(GameStatus.CLIMBING)) {
             if (player.nextMove() == null) {
                 increment = calcIncrement();
-                player.up(increment, STEPS);
+                player.up(increment, 10);
             }
         }
 
     }
 
     public void start () {
-        currentStatus = "CLIMBING";
+        currentStatus = GameStatus.CLIMBING;
         player.setAnimation("climb");
     }
 
     public void restart () {
-        currentStatus = "GLIDE";
+        currentStatus = GameStatus.GLIDE;
         player.setAnimation("glide");
-        // player.moveTo(80, 240, 5);
-        // player.moveTo(70, 270, 5);
         player.moveTo(positionInitial.getX()-10, positionInitial.getY(), 50);
         player.moveTo(positionInitial.getX(), positionInitial.getY());
         endGame = false;
@@ -159,7 +149,7 @@ public class GameCanvas extends Canvas {
         int w = fm.stringWidth(text);
         int h = fm.getAscent();
 
-        if (currentStatus.equals("CLIMBING")) {
+        if (currentStatus.equals(GameStatus.CLIMBING)) {
 
             g.setStroke(new BasicStroke(4.0f));
             FontRenderContext frc = g.getFontRenderContext();
@@ -184,7 +174,7 @@ public class GameCanvas extends Canvas {
                 g.drawImage(arrowUp.getImage(), arrowUp.getX(), arrowUp.getY(), this);
             }
 
-            if (increment < 0 && currentStatus.equals("CLIMBING")) {
+            if (increment < 0 && currentStatus.equals(GameStatus.CLIMBING)) {
                 g.translate(currentX, currentY);
 
                 g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);

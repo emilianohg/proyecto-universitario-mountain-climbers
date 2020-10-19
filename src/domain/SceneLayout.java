@@ -21,8 +21,6 @@ public class SceneLayout extends GameGraphics {
         Graphics2D g2d = image.createGraphics();
 
         g2d.drawImage(image, x, y, width, height, null);
-        // g2d.drawImage(image, -x, y, w, h, null);
-        // g2d.drawImage(image, w+x, y, w, h, null);
 
         g2d.dispose();
 

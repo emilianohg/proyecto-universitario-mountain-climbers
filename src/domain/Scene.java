@@ -40,12 +40,12 @@ public class Scene {
         int w = layouts.stream()
             .mapToInt(GameGraphics::getWidth)
             .max()
-            .getAsInt();
+            .orElse(0);
 
         int h = layouts.stream()
-                .mapToInt(GameGraphics::getWidth)
+                .mapToInt(GameGraphics::getHeight)
                 .max()
-                .getAsInt();
+                .orElse(0);
 
         BufferedImage combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 
