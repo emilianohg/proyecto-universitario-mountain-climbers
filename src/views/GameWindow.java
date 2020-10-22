@@ -1,12 +1,15 @@
+/*
+    Author: Emiliano Hernández Guerrero
+    No. control: 18170410
+    User: emilianohg
+*/
 package views;
 
 import domain.*;
-import utils.ImageUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
 
 import static java.lang.Thread.sleep;
 import static utils.StringUtils.getUrls;

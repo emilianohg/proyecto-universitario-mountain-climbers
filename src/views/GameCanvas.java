@@ -1,3 +1,8 @@
+/*
+    Author: Emiliano Hernández Guerrero
+    No. control: 18170410
+    User: emilianohg
+*/
 package views;
 
 import domain.*;
@@ -161,10 +166,6 @@ public class GameCanvas extends Canvas {
             if (increment > 0) {
                 g.translate(currentX, currentY);
 
-                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
                 g.setColor(Color.WHITE);
                 g.draw(gv.getOutline());
                 g.setColor(new Color(11, 188, 201, 255));
@@ -176,10 +177,6 @@ public class GameCanvas extends Canvas {
 
             if (increment < 0 && currentStatus.equals(GameStatus.CLIMBING)) {
                 g.translate(currentX, currentY);
-
-                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                 g.setColor(Color.BLACK);
                 g.draw(gv.getOutline());

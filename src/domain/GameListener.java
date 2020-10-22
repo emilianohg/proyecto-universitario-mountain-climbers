@@ -1,9 +1,14 @@
+/*
+    Author: Emiliano Hernández Guerrero
+    No. control: 18170410
+    User: emilianohg
+*/
 package domain;
 
 public interface GameListener {
-    public void notifyEndGame();
+    void notifyEndGame();
 
-    public void notifyReset();
+    void notifyReset();
 
-    public void notifyNewGameLoad();
+    void notifyNewGameLoad();
 }
